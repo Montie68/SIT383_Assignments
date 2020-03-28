@@ -58,11 +58,26 @@ sysinfo.txt
 # Crashlytics generated file
 crashlytics-build.properties
 
+Week01/App1/[Ll]ibrary/
+Week01/App1/[Tt]emp/
+Week01/App1/[Oo]bj/
+Week01/App1/[Bb]uild/
+Week01/App1/[Bb]uilds/
+Week01/App1/[Ll]ogs/
+Week01/App1/[Mm]emoryCaptures/
+Week01/App2/[Ll]ibrary/
+Week01/App2/[Tt]emp/
+Week01/App2/[Oo]bj/
+Week01/App2/[Bb]uild/
+Week01/App2/[Bb]uilds/
+Week01/App2/[Ll]ogs/
+Week01/App2/[Mm]emoryCaptures/
+Week03/App01/[Ll]ibrary/
+Week03/App01/[Tt]emp/
+Week03/App01/[Oo]bj/
+Week03/App01/[Bb]uild/
+Week03/App01/[Bb]uilds/
+Week03/App01/[Ll]ogs/
+Week03/App01/[Mm]emoryCaptures/
 
-Week01/App1/Library/
 
-Week01/App1/obj/
-
-Week01/App2/Library/
-
-Week01/App2/obj/
