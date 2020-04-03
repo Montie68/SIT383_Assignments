@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<QCARConfig xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="qcar_config.xsd">
+  <Tracking>
+    <ImageTarget name="10-australian-dollars-banknote-series-2017-reverse-1" size="0.100000 0.046944" />
+    <ImageTarget name="10-australian-dollars-banknote-series-2017-obverse-1" size="0.100000 0.046900" />
+    <ImageTarget name="5-australian-dollars-banknote-series-2016-obverse-1" size="0.100000 0.050158" />
+    <ImageTarget name="5-australian-dollars-banknote-series-2016-reverse-1" size="0.100000 0.050316" />
+  </Tracking>
+</QCARConfig>
