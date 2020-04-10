@@ -11,12 +11,21 @@ using System;
 
 public class RetrieveMap : MonoBehaviour
 {
+    [Header("Map Settings")]
     public int zoom = 0;
     public int x = 0;
     public int y = 0;
-
+    [Header("Material Settings")]
     public Material mapMaterial;
+    [Tooltip("Set size of the generated mesh")]
+    public Vector2Int meshCount = new Vector2Int(16, 16);
+    [Tooltip("Set scale of the generated mesh")]
+    public Vector2 meshScale = new Vector2(8, 8);
+    [Tooltip("Leave blank if you want to generate mesh")]
     public GameObject tileObject;
+    [Header("Debug Fields")] // remove or comment out after debuging
+    [SerializeField] // Testing to see tex member
+    Texture2D tex;
     private static bool TrustCertificate(object sender, X509Certificate x509Certificate, X509Chain x509Chain, SslPolicyErrors sslPolicyErrors)
     {
         // All Certificates are accepted. Not good
@@ -29,10 +38,23 @@ public class RetrieveMap : MonoBehaviour
     void Start()
     {
         ServicePointManager.ServerCertificateValidationCallback = TrustCertificate;
-        makeMesh(16,16);
-        RetrieveTile( x, y, zoom);
+        tex = new Texture2D(meshCount.x, meshCount.y);
+        StartCoroutine(AddTex());
+        RetrieveTile(x, y, zoom);
+        
     }
+    IEnumerator AddTex()
+    {
+        // due to bug where material kept clearing reassigning it here. https://youtu.be/HydAsvDXk9o
+        // the Deley Seems to sort this out. if no delay then bug still happens. and needs to be at least 0.025f
+        yield return new WaitForSeconds(0.05f);
+        if (!mapMaterial.GetTexture("_MainTex") && tex != null)
+        {
+            mapMaterial.mainTexture = tex;
+        }
+        if (tileObject == null) makeMesh(16, 16);
 
+    }
     private void RetrieveTile( int x, int y, int z)
     {
         string url = "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/" + z + "/" + x + "/" + y + ".png";
@@ -43,10 +65,10 @@ public class RetrieveMap : MonoBehaviour
         ((HttpWebRequest)www).UserAgent = "DeakinMapTerrains";
         WebResponse response = www.GetResponse();
 
-        Texture2D tex = new Texture2D(10,10);
+        
         ImageConversion.LoadImage(tex, new BinaryReader(response.GetResponseStream()).ReadBytes(1000000));
-
-        mapMaterial.mainTexture = tex;
+        // due to bug where material kept clearing moved to AddText Method. https://youtu.be/HydAsvDXk9o
+        //mapMaterial.SetTexture("_MainTex",  tex);
     }
 
     void makeMesh(int width, int height)
@@ -61,10 +83,17 @@ public class RetrieveMap : MonoBehaviour
             {
                 float xc = (float)x / (width + 1);
                 float yc = (float)y / (height + 1);
-                float zc = 0.0f;
+                // float zc = Mathf.Sin(10f * xc);
+                //Texture2D _tex = (Texture2D)mapMaterial.mainTexture;
+
+
+                //Color c = _tex.GetPixel((int)xc * _tex.width, (int)yc * _tex.height);
+                Color c = tex.GetPixel((int)xc * tex.width, (int)yc * tex.height);
+
+                float zc = (c.r * 256 + c.g + c.b / 256) - 128;
 
                 Debug.Log("At " + x + "; " + y + "; " + triangleIndex);
-                vertices[y * (width + 1) + x] = new Vector3(xc, yc, zc);
+                vertices[y * (width + 1) + x] = new Vector3(meshScale.x*(xc - 0.5f), meshScale.y * (yc - 0.5f), zc);
                 UVs[y * (width + 1) + x] = new Vector2(xc, yc);
 
                 if ((x < width) && (y < height))
@@ -86,7 +115,6 @@ public class RetrieveMap : MonoBehaviour
         m.uv = UVs;
         m.RecalculateNormals();
         tileObject = new GameObject("TerrainGen", typeof(MeshRenderer), typeof(MeshFilter), typeof(MeshCollider));
-        tileObject.transform.localScale = new Vector3(width / 2, height / 2, 1);
         tileObject.GetComponent<MeshRenderer>().material = mapMaterial;
         tileObject.GetComponent<MeshFilter>().mesh = m;
     }
